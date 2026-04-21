@@ -150,18 +150,27 @@
     }
 
     .slot-bulbs {
-      content: "";
       position: absolute;
-      inset: 7px;
-      border-radius: 4px 4px 22px 22px;
-      background:
-        radial-gradient(circle at 14px 14px, #fff7ba 0 5px, #ffcc58 6px 10px, transparent 11px) top left / 28px 28px repeat-x,
-        radial-gradient(circle at 14px calc(100% - 14px), #fff7ba 0 5px, #ffcc58 6px 10px, transparent 11px) bottom left / 28px 28px repeat-x,
-        radial-gradient(circle at 14px 22px, #fff7ba 0 4px, #ffcc58 5px 8px, transparent 9px) top left / 52px 52px repeat-y,
-        radial-gradient(circle at calc(100% - 14px) 22px, #fff7ba 0 4px, #ffcc58 5px 8px, transparent 9px) top right / 52px 52px repeat-y;
+      inset: 0;
       z-index: 1;
       pointer-events: none;
       animation: bulbBlink 900ms steps(2, end) infinite;
+    }
+
+    .bulb {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 34%, #fff8bf 0 24%, #ffd369 25% 58%, #b96a17 59% 100%);
+      box-shadow:
+        0 0 0 2px rgba(110, 58, 8, 0.18),
+        0 0 12px rgba(255, 204, 88, 0.38);
+    }
+
+    .bulb.small {
+      width: 17px;
+      height: 17px;
     }
 
     .slot-machine::after {
@@ -1349,6 +1358,23 @@
       return sockKeys.map((key) => `<div class="slot-item" data-sock="${key}">${buildSockSvg(key)}</div>`).join("");
     }
 
+    function renderBulbs() {
+      const wrap = document.querySelector(".slot-bulbs");
+      if (!wrap) return;
+
+      const bulbs = [];
+      const add = (x, y, small = false) => {
+        bulbs.push(`<span class="bulb${small ? " small" : ""}" style="left:${x}px;top:${y}px"></span>`);
+      };
+
+      [28, 58, 88, 118, 198, 228, 258, 288].forEach((x) => add(x, 22));
+      [28, 58, 88, 118, 148, 178, 208, 238, 268, 288].forEach((x) => add(x, 186));
+      [26, 78, 130].forEach((y) => add(20, y, true));
+      [26, 170].forEach((y) => add(285, y, true));
+
+      wrap.innerHTML = bulbs.join("");
+    }
+
     function renderSlotMachine() {
       const tracks = [
         document.getElementById("slot-track-0"),
@@ -1501,6 +1527,7 @@
       startQuiz();
     }
 
+    renderBulbs();
     renderSlotMachine();
   </script>
 </body>
