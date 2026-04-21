@@ -157,9 +157,15 @@
       background:
         radial-gradient(circle at 7px 7px, #fff3a5 0 3px, #ffb31a 4px 6px, transparent 7px) 0 0 / 28px 28px,
         radial-gradient(circle at calc(100% - 7px) 7px, #fff3a5 0 3px, #ffb31a 4px 6px, transparent 7px) 0 0 / 28px 28px;
-      z-index: 5;
+      z-index: 1;
       pointer-events: none;
       animation: bulbBlink 900ms steps(2, end) infinite;
+      clip-path: polygon(
+        0% 0%, 100% 0%, 100% 100%, 0% 100%,
+        0% 0%, 0% 18%, 92% 18%, 92% 72%, 0% 72%, 0% 100%,
+        100% 100%, 100% 72%, 97% 72%, 97% 18%, 100% 18%, 100% 0%,
+        0% 0%
+      );
     }
 
     .slot-machine::after {
@@ -197,6 +203,7 @@
     .slot-window {
       position: absolute;
       inset: 44px 24px 58px;
+      z-index: 4;
       border-radius: 8px;
       background:
         linear-gradient(180deg, #f7e2ae 0%, #c9983d 100%);
