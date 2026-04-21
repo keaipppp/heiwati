@@ -493,6 +493,62 @@
       gap: 12px;
     }
 
+    .qr-card {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(20, 20, 20, 0.08);
+      display: grid;
+      justify-items: center;
+      gap: 10px;
+    }
+
+    .qr-wrap {
+      position: relative;
+      width: 172px;
+      height: 172px;
+      border-radius: 18px;
+      background: #fff;
+      padding: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+
+    .qr-wrap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .qr-badge {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.12);
+    }
+
+    .qr-badge svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    .qr-note {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .btn {
       border: 0;
       border-radius: 16px;
@@ -716,6 +772,14 @@
       text-align: center;
     }
 
+    .credit {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: rgba(20, 20, 20, 0.34);
+    }
+
     @media (max-width: 375px) {
       h1 {
         font-size: 34px;
@@ -762,9 +826,17 @@
           <div class="btn-row">
             <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
           </div>
+          <div class="qr-card">
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQMAAACyIsh+AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABUklEQVRoge2YPbLDIAyExVC45Ag5So4GR/NRfARKFx7r7Qq/zMSJkzZo2IIJ5GuQhH4sMjQ0NDT0XUrtImnOWJa77efegI3LHteEw1jlXrC9OQQmXHvnrxyUgGp1C0QsGX5efAMyVW6SX4AL7FD5bD+E/W8DLQXxbeawXeeo3oFD8Gkh8PqPD8CuTU8jXDc4OsMki0NgTToHXa1uQlY9/QGRgLUHEmiTYge9AUrn4ZqtLN60bOcU5AKIlnNQNVAWEbQApucU5APYJKmaHcRS0MvbdAJMKPbKF4qyghYg6ymqvQD0Lp1eQvP8u8785wF483HNFr9VxB3QZE3ObpXC4tcdcPRy6FaRgth4n1OQD6B15pgv2JM3OySPQJsWOfurvg37noBjgNJiLapXgIfBpt14Oft3DXD5/x5l/l4/fLDqFnhKQRyjzu72AQwNDQ0NXekP7dv/gVsAYS0AAAAASUVORK5CYII=" alt="heiwati.pages.dev 二维码">
+              <div class="qr-badge" id="qr-sock-home"></div>
+            </div>
+            <div class="qr-note">扫码直达袜格测试</div>
+          </div>
         </div>
       </div>
       <p class="footer-note">建议手机打开。做完可以直接分享结果文案。</p>
+      <p class="credit">by 🍠深刻里斯</p>
     </section>
 
     <section class="page" id="page-quiz">
@@ -808,9 +880,17 @@
             <button class="btn btn-primary" onclick="shareResult()">分享结果</button>
             <button class="btn btn-secondary" onclick="retryQuiz()">再测一次</button>
           </div>
+          <div class="qr-card">
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6AQMAAACyIsh+AAAABlBMVEX///8AAABVwtN+AAAACXBIWXMAAA7EAAAOxAGVKw4bAAABUklEQVRoge2YPbLDIAyExVC45Ag5So4GR/NRfARKFx7r7Qq/zMSJkzZo2IIJ5GuQhH4sMjQ0NDT0XUrtImnOWJa77efegI3LHteEw1jlXrC9OQQmXHvnrxyUgGp1C0QsGX5efAMyVW6SX4AL7FD5bD+E/W8DLQXxbeawXeeo3oFD8Gkh8PqPD8CuTU8jXDc4OsMki0NgTToHXa1uQlY9/QGRgLUHEmiTYge9AUrn4ZqtLN60bOcU5AKIlnNQNVAWEbQApucU5APYJKmaHcRS0MvbdAJMKPbKF4qyghYg6ymqvQD0Lp1eQvP8u8785wF483HNFr9VxB3QZE3ObpXC4tcdcPRy6FaRgth4n1OQD6B15pgv2JM3OySPQJsWOfurvg37noBjgNJiLapXgIfBpt14Oft3DXD5/x5l/l4/fLDqFnhKQRyjzu72AQwNDQ0NXekP7dv/gVsAYS0AAAAASUVORK5CYII=" alt="heiwati.pages.dev 二维码">
+              <div class="qr-badge" id="qr-sock-result"></div>
+            </div>
+            <div class="qr-note">扫码把这双袜子转给别人</div>
+          </div>
         </div>
       </div>
       <p class="footer-note">这只是风格测试，不是身份判断。好玩就行，别太当真。</p>
+      <p class="credit">by 🍠深刻里斯</p>
     </section>
   </div>
 
@@ -1372,6 +1452,13 @@
       return sockKeys.map((key) => `<div class="slot-item" data-sock="${key}">${buildSockSvg(key)}</div>`).join("");
     }
 
+    function renderQrBadges() {
+      const home = document.getElementById("qr-sock-home");
+      const result = document.getElementById("qr-sock-result");
+      if (home) home.innerHTML = buildSockSvg("blackMid");
+      if (result) result.innerHTML = buildSockSvg("hiddenBlackGold");
+    }
+
     function renderBulbs() {
       const wrap = document.querySelector(".slot-bulbs");
       if (!wrap) return;
@@ -1553,6 +1640,7 @@
 
     renderBulbs();
     renderSlotMachine();
+    renderQrBadges();
   </script>
 </body>
 </html>
