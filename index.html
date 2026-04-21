@@ -155,17 +155,13 @@
       inset: 7px;
       border-radius: 4px 4px 22px 22px;
       background:
-        radial-gradient(circle at 7px 7px, #fff3a5 0 3px, #ffb31a 4px 6px, transparent 7px) 0 0 / 28px 28px,
-        radial-gradient(circle at calc(100% - 7px) 7px, #fff3a5 0 3px, #ffb31a 4px 6px, transparent 7px) 0 0 / 28px 28px;
+        radial-gradient(circle at 14px 14px, #fff7ba 0 5px, #ffcc58 6px 10px, transparent 11px) top left / 28px 28px repeat-x,
+        radial-gradient(circle at 14px calc(100% - 14px), #fff7ba 0 5px, #ffcc58 6px 10px, transparent 11px) bottom left / 28px 28px repeat-x,
+        radial-gradient(circle at 14px 22px, #fff7ba 0 4px, #ffcc58 5px 8px, transparent 9px) top left / 52px 52px repeat-y,
+        radial-gradient(circle at calc(100% - 14px) 22px, #fff7ba 0 4px, #ffcc58 5px 8px, transparent 9px) top right / 52px 52px repeat-y;
       z-index: 1;
       pointer-events: none;
       animation: bulbBlink 900ms steps(2, end) infinite;
-      clip-path: polygon(
-        0% 0%, 100% 0%, 100% 100%, 0% 100%,
-        0% 0%, 0% 18%, 92% 18%, 92% 72%, 0% 72%, 0% 100%,
-        100% 100%, 100% 72%, 97% 72%, 97% 18%, 100% 18%, 100% 0%,
-        0% 0%
-      );
     }
 
     .slot-machine::after {
@@ -721,7 +717,7 @@
           <div class="eyebrow">SockTI</div>
           <h1>你本人到底是什么袜感？</h1>
           <p class="hero-sub">
-            16 种袜型人格，看看你到底是哪一双。
+            众所周知，袜子是人的第二个灵魂。。。
           </p>
           <div class="sock-stage">
             <div class="slot-machine" aria-hidden="true">
