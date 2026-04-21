@@ -123,6 +123,12 @@
 
     .sock-stage::before,
     .sock-stage::after {
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .sock-stage::before,
+    .sock-stage::after {
       content: "";
       position: absolute;
       width: 120px;
@@ -142,10 +148,116 @@
       bottom: -40px;
     }
 
-    .sock-emoji {
-      font-size: 90px;
-      transform: rotate(-12deg);
-      text-shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
+    .slot-machine {
+      width: min(250px, 82%);
+      height: 138px;
+      position: relative;
+      z-index: 3;
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04)),
+        #181818;
+      border: 2px solid rgba(255,255,255,0.14);
+      box-shadow:
+        inset 0 0 0 2px rgba(0,0,0,0.4),
+        0 18px 34px rgba(0,0,0,0.35);
+      overflow: hidden;
+    }
+
+    .slot-machine::before,
+    .slot-machine::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 36px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .slot-machine::before {
+      top: 0;
+      background: linear-gradient(180deg, #181818, rgba(24,24,24,0));
+    }
+
+    .slot-machine::after {
+      bottom: 0;
+      background: linear-gradient(0deg, #181818, rgba(24,24,24,0));
+    }
+
+    .slot-window {
+      position: absolute;
+      inset: 20px 34px;
+      border-radius: 16px;
+      background: #f8f3e8;
+      border: 3px solid #050505;
+      overflow: hidden;
+    }
+
+    .slot-window::before {
+      content: "";
+      position: absolute;
+      inset: 48px 0 auto;
+      height: 2px;
+      background: rgba(0, 0, 0, 0.08);
+      z-index: 2;
+    }
+
+    .slot-reel {
+      display: grid;
+      grid-auto-rows: 96px;
+      animation: slotSpin 4.8s steps(16) infinite;
+      will-change: transform;
+    }
+
+    .slot-item {
+      height: 96px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slot-item svg {
+      width: 82px;
+      height: 82px;
+      display: block;
+      filter: drop-shadow(0 8px 6px rgba(0,0,0,0.18));
+    }
+
+    .slot-knob {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      width: 16px;
+      height: 38px;
+      transform: translateY(-50%);
+      border-radius: 999px;
+      background: #b8ff65;
+      border: 2px solid #050505;
+      box-shadow: inset -3px 0 0 rgba(0,0,0,0.14);
+      z-index: 4;
+    }
+
+    .slot-label {
+      position: absolute;
+      left: 14px;
+      top: 8px;
+      color: rgba(255,255,255,0.7);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      z-index: 4;
+    }
+
+    @keyframes slotSpin {
+      to {
+        transform: translateY(-1536px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .slot-reel {
+        animation: none;
+      }
     }
 
     .section {
@@ -423,21 +535,27 @@
     <section class="page active" id="page-home">
       <div class="card">
         <div class="hero">
-          <div class="eyebrow">SockTI / 袜格测试</div>
-          <h1>你到底是哪种袜子？</h1>
+          <div class="eyebrow">SockTI / 袜子人格鉴定处</div>
+          <h1>你本人到底是什么袜感？</h1>
           <p class="hero-sub">
-            不是在测你穿什么，是在测你整个人散发出来的那种袜感。
-            白袜、黑袜、足球袜、船袜，最后总有一双特别像你。
+            白袜、黑袜、足球袜、船袜。
+            你身上那股袜味，根本藏不住。
           </p>
           <div class="sock-stage">
-            <div class="sock-emoji">🧦</div>
+            <div class="slot-machine" aria-hidden="true">
+              <div class="slot-label">SOCK SLOT</div>
+              <div class="slot-window">
+                <div class="slot-reel" id="slot-reel"></div>
+              </div>
+              <div class="slot-knob"></div>
+            </div>
           </div>
         </div>
         <div class="section">
           <div class="bullet-list">
-            <div class="bullet">12 道题，按你的相处方式、气场、节奏和审美来判。</div>
-            <div class="bullet">结果分成 16 种袜型人格，没有标准答案，只有“确实有点像”。</div>
-            <div class="bullet">全程纯前端，本地算分，不会上传你的选择。</div>
+            <div class="bullet">有的人一看就是白袜，有的人一站出来就是全黑长袜。</div>
+            <div class="bullet">你到底是哪一双，测完就知道。</div>
+            <div class="bullet">别嘴硬，你自己心里应该也有答案。</div>
           </div>
           <div class="btn-row">
             <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
@@ -1029,6 +1147,17 @@
       `;
     }
 
+    function renderSlotMachine() {
+      const reel = document.getElementById("slot-reel");
+      if (!reel) return;
+
+      const sockKeys = Object.values(results).map((item) => item.sock);
+      const loopKeys = [...sockKeys, ...sockKeys];
+      reel.innerHTML = loopKeys.map((key) => {
+        return `<div class="slot-item">${buildSockSvg(key)}</div>`;
+      }).join("");
+    }
+
     function showResult() {
       const code = calcResultCode();
       const data = results[code] || results.IJCM;
@@ -1076,6 +1205,8 @@
     function retryQuiz() {
       startQuiz();
     }
+
+    renderSlotMachine();
   </script>
 </body>
 </html>
