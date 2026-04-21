@@ -187,9 +187,10 @@
     .slot-crown {
       position: absolute;
       left: 50%;
-      top: 7px;
+      top: 8px;
       transform: translateX(-50%);
-      padding: 7px 18px 6px;
+      width: 112px;
+      padding: 7px 0 6px;
       border-radius: 4px;
       background:
         linear-gradient(180deg, #fff6b9 0%, #ffd75f 50%, #b86f12 51%, #d99b19 100%);
@@ -303,12 +304,16 @@
 
     .slot-label {
       position: absolute;
-      left: 20px;
-      top: 20px;
-      color: #fff1a8;
-      font-size: 10px;
+      left: 25px;
+      top: 13px;
+      padding: 5px 8px 4px;
+      border-radius: 3px;
+      background: #4b0905;
+      border: 2px solid #7c4c11;
+      color: #ffe7a6;
+      font-size: 8px;
       font-weight: 800;
-      letter-spacing: 0.16em;
+      letter-spacing: 0.12em;
       z-index: 6;
       text-shadow:
         2px 0 0 #8c170f,
@@ -1367,10 +1372,10 @@
         bulbs.push(`<span class="bulb${small ? " small" : ""}" style="left:${x}px;top:${y}px"></span>`);
       };
 
-      [28, 58, 88, 118, 198, 228, 258, 288].forEach((x) => add(x, 22));
-      [28, 58, 88, 118, 148, 178, 208, 238, 268, 288].forEach((x) => add(x, 186));
-      [26, 78, 130].forEach((y) => add(20, y, true));
-      [26, 170].forEach((y) => add(285, y, true));
+      [30, 58, 232, 260].forEach((x) => add(x, 24));
+      [30, 60, 90, 120, 150, 180, 210, 240, 270].forEach((x) => add(x, 187));
+      [86, 140].forEach((y) => add(18, y, true));
+      [170].forEach((y) => add(286, y, true));
 
       wrap.innerHTML = bulbs.join("");
     }
