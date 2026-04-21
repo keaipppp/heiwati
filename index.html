@@ -1,175 +1,1081 @@
-html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>狗格测试 - DogTI</title>
-    <style>
-        { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-        .home { text-align: center; }
-        .home h1 { font-size: 2.5rem; color: #667eea; margin-bottom: 10px; }
-        .home .subtitle { color: #666; margin-bottom: 30px; }
-        .dog-emoji { font-size: 5rem; margin: 20px 0; animation: bounce 2s infinite; }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; padding: 15px 50px; border-radius: 30px;
-            font-size: 1.1rem; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
-        .quiz { display: none; }
-        .progress { height: 6px; background: #eee; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
-        .progress-bar { height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
-        .question-num { color: #667eea; font-weight: bold; margin-bottom: 10px; }
-        .question { font-size: 1.3rem; color: #333; margin-bottom: 30px; line-height: 1.6; }
-        .options { display: flex; flex-direction: column; gap: 12px; }
-        .option { background: #f8f9fa; border: 2px solid transparent; padding: 18px 20px; border-radius: 12px; cursor: pointer; transition: all 0.3s; text-align: left; font-size: 1rem; }
-        .option:hover { border-color: #667eea; background: #f0f4ff; }
-        .result { display: none; text-align: center; }
-        .result-emoji { font-size: 6rem; margin: 20px 0; }
-        .result-type { font-size: 2rem; color: #667eea; font-weight: bold; margin-bottom: 10px; }
-        .result-name { font-size: 1.5rem; color: #333; margin-bottom: 20px; }
-        .result-desc { color: #666; line-height: 1.8; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px; }
-        .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 30px; }
-        .tag { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
-        .loading { display: none; text-align: center; padding: 60px 0; }
-        .loading-spinner { width: 60px; height: 60px; border: 4px solid #eee; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>SockTI</title>
+  <style>
+    :root {
+      --bg: #f5f1e8;
+      --paper: #fffdf8;
+      --ink: #141414;
+      --muted: #6f6a63;
+      --line: #d7d0c5;
+      --accent: #111111;
+      --accent-2: #b8ff65;
+      --shadow: 0 18px 40px rgba(20, 20, 20, 0.08);
+      --radius: 22px;
+      --font: "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(184, 255, 101, 0.22), transparent 28%),
+        linear-gradient(180deg, #f8f4ea 0%, #f1ece2 100%);
+      color: var(--ink);
+      font-family: var(--font);
+      min-height: 100vh;
+      padding: 0 14px 40px;
+    }
+
+    .app {
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .page {
+      display: none;
+      animation: fade 220ms ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card {
+      background: rgba(255, 253, 248, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(215, 208, 197, 0.7);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 28px 22px 22px;
+      position: relative;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.94), rgba(247, 243, 235, 0.9)),
+        #fff;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(20, 20, 20, 0.06);
+      color: var(--ink);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: 38px;
+      line-height: 1;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-sub {
+      margin-top: 12px;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .sock-stage {
+      margin-top: 24px;
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, #111 0 18%, transparent 18% 100%),
+        linear-gradient(135deg, #262626, #090909);
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sock-stage::before,
+    .sock-stage::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: rgba(184, 255, 101, 0.15);
+      border-radius: 50%;
+      filter: blur(6px);
+    }
+
+    .sock-stage::before {
+      left: -18px;
+      top: -28px;
+    }
+
+    .sock-stage::after {
+      right: -28px;
+      bottom: -40px;
+    }
+
+    .sock-emoji {
+      font-size: 90px;
+      transform: rotate(-12deg);
+      text-shadow: 0 14px 28px rgba(0, 0, 0, 0.32);
+    }
+
+    .section {
+      padding: 0 22px 22px;
+    }
+
+    .bullet-list {
+      margin-top: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .bullet {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(20, 20, 20, 0.04);
+      font-size: 14px;
+      line-height: 1.6;
+      color: #2d2a27;
+    }
+
+    .btn-row {
+      margin-top: 22px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-secondary {
+      background: rgba(20, 20, 20, 0.08);
+      color: var(--ink);
+    }
+
+    .quiz {
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progress {
+      margin-top: 16px;
+      height: 8px;
+      background: rgba(20, 20, 20, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #111 0%, #5a5a5a 65%, #b8ff65 100%);
+      border-radius: inherit;
+      transition: width 220ms ease;
+    }
+
+    .question-card {
+      margin-top: 18px;
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(20, 20, 20, 0.04);
+    }
+
+    .question-tag {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(184, 255, 101, 0.36);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .question-text {
+      font-size: 24px;
+      line-height: 1.35;
+      letter-spacing: -0.03em;
+    }
+
+    .question-hint {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .options {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .opt {
+      width: 100%;
+      text-align: left;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(20, 20, 20, 0.08);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .opt.selected {
+      border-color: var(--ink);
+      background: #f3f7ea;
+      transform: translateY(-1px);
+    }
+
+    .opt-key {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(20, 20, 20, 0.08);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .opt-text {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    .quiz-actions {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn[disabled] {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .result {
+      padding: 22px;
+    }
+
+    .result-head {
+      padding: 24px 22px 22px;
+      background:
+        radial-gradient(circle at top right, rgba(184,255,101,0.3), transparent 26%),
+        linear-gradient(180deg, #fffefb 0%, #f5efe5 100%);
+      border-bottom: 1px solid rgba(20, 20, 20, 0.06);
+    }
+
+    .result-type {
+      margin-top: 12px;
+      font-size: 34px;
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .result-sub {
+      margin-top: 10px;
+      font-size: 16px;
+      color: var(--muted);
+    }
+
+    .result-emoji {
+      margin-top: 18px;
+      width: 164px;
+      height: 164px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 24px;
+      background:
+        linear-gradient(180deg, rgba(20,20,20,0.05), rgba(20,20,20,0.02)),
+        rgba(255,255,255,0.66);
+      border: 1px solid rgba(20, 20, 20, 0.08);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+    }
+
+    .result-emoji svg {
+      width: 136px;
+      height: 136px;
+      display: block;
+      filter: drop-shadow(0 10px 10px rgba(0, 0, 0, 0.12));
+    }
+
+    .quote {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #161616;
+      color: #f6f3eb;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .meta {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .traits {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .trait {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(20, 20, 20, 0.06);
+      font-size: 13px;
+    }
+
+    .result-desc {
+      margin-top: 18px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #2b2926;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 12px;
+      line-height: 1.6;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    @media (max-width: 375px) {
+      h1 {
+        font-size: 34px;
+      }
+
+      .question-text {
+        font-size: 21px;
+      }
+
+      .result-type {
+        font-size: 30px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="home" id="home">
-            <div class="dog-emoji">🐕</div>
-            <h1>DogTI 测试</h1>
-            <p class="subtitle">测测你是哪种狗格类型</p>
-            <p style="color: #999; font-size: 0.9rem; margin-bottom: 30px;">共 10 题 · 约 2 分钟</p>
-            <button class="btn" onclick="startQuiz()">开始测试</button>
+  <div class="app">
+    <section class="page active" id="page-home">
+      <div class="card">
+        <div class="hero">
+          <div class="eyebrow">SockTI / 袜格测试</div>
+          <h1>你到底是哪种袜子？</h1>
+          <p class="hero-sub">
+            不是在测你穿什么，是在测你整个人散发出来的那种袜感。
+            白袜、黑袜、足球袜、船袜，最后总有一双特别像你。
+          </p>
+          <div class="sock-stage">
+            <div class="sock-emoji">🧦</div>
+          </div>
         </div>
-        <div class="quiz" id="quiz">
-            <div class="progress">
-            <div class="progress-bar" id="progressBar" style="width: 10%"></div></div>
-            <div class="question-num" id="questionNum">1 / 10</div>
-            <div class="question" id="questionText">加载中...</div>
-            <div class="options" id="options"></div>
+        <div class="section">
+          <div class="bullet-list">
+            <div class="bullet">12 道题，按你的相处方式、气场、节奏和审美来判。</div>
+            <div class="bullet">结果分成 16 种袜型人格，没有标准答案，只有“确实有点像”。</div>
+            <div class="bullet">全程纯前端，本地算分，不会上传你的选择。</div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
+          </div>
         </div>
-        <div class="loading" id="loading">
-            <div class="loading-spinner"></div>
-            <p>正在分析你的狗格...</p>
+      </div>
+      <p class="footer-note">建议手机打开。做完可以直接分享结果文案。</p>
+    </section>
+
+    <section class="page" id="page-quiz">
+      <div class="card quiz">
+        <div class="topbar">
+          <button class="btn btn-secondary" style="padding:10px 14px;font-size:14px;" onclick="goBack()">返回</button>
+          <div id="quiz-counter">1 / 12</div>
         </div>
-        <div class="result" id="result">
-            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">你的狗格是</p>
-            <div class="result-type" id="resultType">—</div>
-            <div class="result-name" id="resultName">—</div>
-            <div class="result-emoji" id="resultEmoji">🐕</div>
-            <div class="result-desc" id="resultDesc">—</div>
-            <div
-
-class="tags" id="tags"></div>
-            <button class="btn" onclick="restart()">再测一次</button>
+        <div class="progress">
+          <div class="progress-fill" id="progress-fill"></div>
         </div>
-    </div>
-javascript
-    <script>
-        const questions = [
-            { text: "周末到了，你更想...", options: [{ text: "🎉 约朋友出去玩", type: "E", dim: "EI" }, { text: "🏠 在家休息充电", type: "I", dim: "EI" }] },
-            { text: "遇到问题时，你通常...", options: [{ text: "🧠 先分析利弊再做决定", type: "T", dim: "TF" }, { text: "❤️ 考虑大家的感受", type: "F", dim: "TF" }] },
-            { text: "你更喜欢哪种生活方式？", options: [{ text: "📋 有计划、有条理", type: "J", dim: "JP" }, { text: "🌊 随性、灵活应变", type: "P", dim: "JP" }] },
-            { text: "你更关注...", options: [{ text: "👀 具体的事实和细节", type: "S", dim: "SN" }, { text: "💡 可能性和未来", type: "N", dim: "SN" }] },
-            { text: "在聚会上，你通常...", options: [{ text: "🎤 主动和人聊天", type: "E", dim: "EI" }, { text: "👂 听别人说话", type: "I", dim: "EI" }] },
-            { text: "做决定时，什么更重要？", options: [{ text: "✅ 逻辑和公平", type: "T", dim: "TF" }, { text: "🤝 和谐与人情", type: "F", dim: "TF" }] },
-            { text: "你的工作/学习风格是...", options: [{ text: "⏰ 提前完成，不喜欢拖延", type: "J", dim: "JP" }, { text: "🔥 截止日期前效率最高", type: "P", dim: "JP" }] },
-            { text: "你更相信...", options: [{ text: "📊 经验和实际数据", type: "S", dim: "SN" }, { text: "🔮 直觉和灵感", type: "N", dim: "SN" }] },
-            { text: "新环境中，你会...", options: [{ text: "🚀 主动认识新朋友", type: "E", dim: "EI" }, { text: "🛡️ 先观察再行动", type: "I", dim: "EI" }] },
-            { text: "面对批评，你更在意...", options: [{ text: "📌 批评是否合理", type: "T", dim: "TF" }, { text: "💔 对方的态度", type: "F", dim: "TF" }] }
-        ];
 
-        const results = {
-            "ESTJ": { name: "德牧", emoji: "🐕‍🦺", desc: "天生的领导者，忠诚可靠，执行力超强。你是团队的主心骨，说到做到，值得信赖。", tags: ["可靠", "高效", "负责"] },
-            "ESFJ": { name: "金毛", emoji: "🦮", desc: "温暖治愈的小太阳，总是照顾他人感受。你的友善让周围的人都感到舒适。", tags: ["温暖", "体贴", "合群"] },
-            "ISTJ": { name: "柴犬", emoji: "🐕", desc: "稳重踏实的实干家，重视承诺和传统。你做事有条理，是值得信赖的伙伴。", tags: ["稳重", "认真", "守序"] },
-            "ISFJ": { name: "柯基", emoji: "🐕", desc: "默默付出的守护者，细腻敏感。你总是把别人的需求放在第一位，太温柔了。", tags: ["温柔", "细心", "忠诚"] },
-            "ENTJ": { name: "杜宾", emoji: "🐕‍🦺", desc: "天生的指挥官，果断有魄力。你目标明确，带领团队冲锋陷阵，气场强大。", tags: ["果断", "领导力", "野心"] },
-            "ENTP": { name: "哈士奇", emoji: "🐕", desc: "脑洞大开的创意家，讨厌无聊。你的机智和幽默总能带来惊喜（和麻烦）。", tags: ["机智", "叛逆", "创意"] },
-            "INTJ": { name: "边牧", emoji: "🐕", desc: "智商爆表的策略家，独立自主。你善于规划，追求效率，是完美主义者。", tags: ["聪明", "独立", "战略"] },
-            "INTP": { name: "萨摩耶", emoji: "🐕", desc: "好奇宝宝，沉浸在自己的世界里。你爱思考抽象问题，外表萌内心深邃。", tags: ["好奇", "理性", "呆萌"] },
-            "ENFJ": { name: "拉布拉多", emoji: "🦮", desc: "天生的鼓舞者，充满魅力。你善于激励他人，是大家的精神领袖。", tags: ["热情", "感染力", "利他"] },
-            "ENFP": { name: "柯基", emoji: "🐕", desc: "活力四射的快乐小狗，充满创意。你的热情能感染所有人，讨厌被束缚。", tags: ["热情", "创意", "自由"] },
-            "INFJ": { name: "秋田犬", emoji: "🐕", desc: "深邃的理想主义者，洞察人心。你有独特的世界观，追求有意义的人生。", tags: ["深刻", "理想", "神秘"] },
-            "INFP": { name: "比格", emoji: "🐕", desc: "浪漫的追梦人，内心丰富。你重视价值观，虽然敏感但充满创造力。", tags: ["浪漫", "敏感", "艺术"] },
-            "ESTP": { name: "斗牛犬", emoji: "🐕", desc: "行动派冒险家，活在当下。你喜欢刺激，敢于尝试，是派对的主角。", tags: ["冒险", "行动", "大胆"] },
-            "ESFP": { name: "泰迪", emoji: "🐕", desc: "天生的表演者，爱成为焦点。你活泼可爱，总能带来欢乐气氛。", tags: ["活泼", "社交", "乐观"] },
-            "ISTP": { name: "狼狗", emoji: "🐕‍🦺", desc: "冷静的观察者，动手能力超强。你喜欢独自探索，是问题解决专家。", tags: ["冷静", "独立", "实用"] },
-            "ISFP": { name: "博美", emoji: "🐕", desc: "艺术家的灵魂，敏感细腻。你追求美感，虽然安静但有自己的小宇宙。", tags: ["艺术", "敏感", "随和"] }
-        };
-        let currentQuestion = 0;
-        let answers = [];
-        function startQuiz() {
-            document.getElementById('home').style.display = 'none';
-            document.getElementById('quiz').style.display = 'block';
-            showQuestion();
-        }
+        <div class="question-card">
+          <div class="question-tag" id="question-tag">袜格雷达启动中</div>
+          <div class="question-text" id="question-text"></div>
+          <div class="question-hint" id="question-hint"></div>
+        </div>
 
-        function showQuestion() {
-            const q = questions[currentQuestion];
-            document.getElementById('questionNum').textContent = `${currentQuestion + 1} / 10`;
-            document.getElementById('questionText').textContent = q.text;
-            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / 10) * 100}%`;
-            const optionsHtml = q.options.map((opt, idx) => `<button class="option" onclick="selectOption(${idx})">${opt.text}</button>`).join('');
-            document.getElementById('options').innerHTML = optionsHtml;
-        }
-        function selectOption(idx) {
-            answers.push(questions[currentQuestion].options[idx]);
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                showQuestion();
-            } else {
-                showLoading();
-            }
-        }
+        <div class="options" id="options-wrap"></div>
 
-        function showLoading() {
-            document.getElementById('quiz').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            setTimeout(() => { showResult(); }, 2000);
-        }
-        function showResult() {
-            const scores = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
-            answers.forEach(a => scores[a.type]++);
-            const type = [scores.E >= scores.I ? 'E' : 'I', scores.S >= scores.N ? 'S' : 'N', scores.T >= scores.F ? 'T' : 'F', scores.J >= scores.P ? 'J' : 'P'].join('');
-            const result = results[type];
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('resultType').textContent = type;
-            document.getElementById('resultName').textContent = result.name;
-            document.getElementById('resultEmoji').textContent = result.emoji;
-            document.getElementById('resultDesc').textContent = result.desc;
-            document.getElementById('tags').innerHTML = result.tags.map(t => `<span class="tag">${t}</span>`).join('');
-        }
-        function restart() {
-            currentQuestion = 0;
-            answers = [];
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('home').style.display = 'block';
-        }
-    </script>
+        <div class="quiz-actions">
+          <button class="btn btn-secondary" onclick="goBack()">上一题</button>
+          <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()" disabled>继续</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-result">
+      <div class="card">
+        <div class="result-head">
+          <div class="eyebrow">测试结果 / SockTI</div>
+          <div class="result-type" id="result-type"></div>
+          <div class="result-sub" id="result-sub"></div>
+          <div class="result-emoji" id="result-emoji"></div>
+          <div class="quote" id="result-quote"></div>
+          <div class="meta" id="result-meta"></div>
+        </div>
+        <div class="result">
+          <div class="traits" id="trait-list"></div>
+          <div class="result-desc" id="result-desc"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="shareResult()">分享结果</button>
+            <button class="btn btn-secondary" onclick="retryQuiz()">再测一次</button>
+          </div>
+        </div>
+      </div>
+      <p class="footer-note">这只是风格测试，不是身份判断。好玩就行，别太当真。</p>
+    </section>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "朋友说今晚有个陌生局，问你来不来，你第一反应是？",
+        hint: "先看你是先进去还是先观察。",
+        options: [
+          { key: "A", text: "去，先到了再说，场子熟不熟可以现场解决。", dim: "E" },
+          { key: "B", text: "先看看都是什么人，再决定要不要出现。", dim: "I" },
+          { key: "C", text: "去不去都行，但最好别搞得太正式。", dim: "P" }
+        ]
+      },
+      {
+        text: "出门前选袜子，你更像哪种人？",
+        hint: "看你对细节有没有秩序感。",
+        options: [
+          { key: "A", text: "会想整体搭配，颜色长度都要顺。", dim: "J" },
+          { key: "B", text: "抓到哪双算哪双，舒服最重要。", dim: "P" },
+          { key: "C", text: "只要那个感觉对了，细节可以后补。", dim: "W" }
+        ]
+      },
+      {
+        text: "别人第一次见你，最容易给你的评价是？",
+        hint: "第一印象通常很诚实。",
+        options: [
+          { key: "A", text: "有点距离感，但挺有型。", dim: "C" },
+          { key: "B", text: "很好聊，没什么攻击性。", dim: "W" },
+          { key: "C", text: "看着不吵，但其实很有存在感。", dim: "I" }
+        ]
+      },
+      {
+        text: "有好感的人坐在你附近，你会？",
+        hint: "靠近方式最暴露本能。",
+        options: [
+          { key: "A", text: "找个自然理由靠近一点。", dim: "A" },
+          { key: "B", text: "先不动，等他来打开局面。", dim: "M" },
+          { key: "C", text: "不一定靠近，但会让对方注意到你。", dim: "E" }
+        ]
+      },
+      {
+        text: "你的衣柜整体更接近哪种状态？",
+        hint: "看你平时是怎么管理生活的。",
+        options: [
+          { key: "A", text: "分区明确，黑白灰和彩色各有位置。", dim: "J" },
+          { key: "B", text: "能穿就行，但总有几件舍不得扔。", dim: "P" },
+          { key: "C", text: "东西不一定多，但每件都有自己的戏。", dim: "W" }
+        ]
+      },
+      {
+        text: "你更喜欢别人怎么形容你？",
+        hint: "理想自我比现实还诚实。",
+        options: [
+          { key: "A", text: "稳、利落、边界清楚。", dim: "C" },
+          { key: "B", text: "有趣、鲜活、相处不累。", dim: "W" },
+          { key: "C", text: "不一定热闹，但很值得继续了解。", dim: "M" }
+        ]
+      },
+      {
+        text: "在一群人里，你通常是？",
+        hint: "社交姿态最能区分外放和内敛。",
+        options: [
+          { key: "A", text: "先把气氛带起来的那个。", dim: "E" },
+          { key: "B", text: "先看一圈，再决定自己要不要加入。", dim: "I" },
+          { key: "C", text: "不一定说很多，但别人会记得你穿什么、怎么坐、怎么笑。", dim: "C" }
+        ]
+      },
+      {
+        text: "约会迟到了十分钟，你更可能？",
+        hint: "小失误最能看出底层反应。",
+        options: [
+          { key: "A", text: "已经在路上想好怎么补偿和安抚了。", dim: "A" },
+          { key: "B", text: "会有点烦，但还是尽量维持体面。", dim: "J" },
+          { key: "C", text: "嘴上说没事，心里已经开始重新评估这个人。", dim: "C" }
+        ]
+      },
+      {
+        text: "如果要选一种关系节奏，你更偏向？",
+        hint: "快慢感决定很多东西。",
+        options: [
+          { key: "A", text: "有来有回，最好别太拖。", dim: "A" },
+          { key: "B", text: "慢一点没关系，熟了再放开。", dim: "M" },
+          { key: "C", text: "先轻松一点，别一上来就太有压力。", dim: "P" }
+        ]
+      },
+      {
+        text: "你更接近哪种性感？",
+        hint: "不是外貌，是整个人散发出来的气味。",
+        options: [
+          { key: "A", text: "干净、冷一点、像收得很好的黑色线条。", dim: "C" },
+          { key: "B", text: "轻松、活一点、像刚运动完还没散掉的热气。", dim: "W" },
+          { key: "C", text: "不一定显眼，但会让人想多看几眼。", dim: "I" }
+        ]
+      },
+      {
+        text: "如果明天突然有个短途出行，你会？",
+        hint: "计划感和行动感一起看。",
+        options: [
+          { key: "A", text: "立刻收拾，路上再想细节。", dim: "E" },
+          { key: "B", text: "先确认安排、路线、穿什么。", dim: "J" },
+          { key: "C", text: "去也行，但别催我太快进入状态。", dim: "M" }
+        ]
+      },
+      {
+        text: "最后一题，如果你真的是一双袜子，你最想成为哪种？",
+        hint: "选你最向往的那个版本。",
+        options: [
+          { key: "A", text: "一眼就能定风格的那双。", dim: "E" },
+          { key: "B", text: "看着普通，但真正上脚最舒服最耐穿的那双。", dim: "I" },
+          { key: "C", text: "不一定天天穿，但穿上就会让人记住的那双。", dim: "W" }
+        ]
+      }
+    ];
+
+    const results = {
+      EJCA: {
+        title: "全黑长袜",
+        subtitle: "气场比人先到",
+        quote: "不是高冷，是你还没走到我的社交半径里。",
+        traits: ["边界明确", "出场感强", "冷感利落", "很难忽略"],
+        desc: "你很会控制自己的出场方式，干净、利落、边界明确。你不一定话最多，但存在感往往最强，别人对你的印象通常是“有点难接近，但很想再看两眼”。你不爱乱给热情，可一旦认真起来，稳定得很可怕。",
+        sock: "allBlackLong"
+      },
+      EJCM: {
+        title: "足球袜",
+        subtitle: "强度很高，但不乱来",
+        quote: "我可以不先开口，但我站在那里就已经很明显了。",
+        traits: ["体感强", "压迫感低配版", "节奏稳定", "不爱拖泥带水"],
+        desc: "你有很强的体感和存在感，做事带节奏，站在人群里很难被忽略。你不是吵闹型，你是那种安静也有压迫感的人。别人会先感受到你的气场，再慢慢发现你其实比看上去克制得多。",
+        sock: "footballSock"
+      },
+      EJWA: {
+        title: "白短袜",
+        subtitle: "看起来清爽，其实很会",
+        quote: "别把我当简单款，我只是出手比较自然。",
+        traits: ["少年感", "轻盈直给", "没有废话", "容易心动"],
+        desc: "你给人的第一感觉很干净、轻盈、没攻击性，但相处一下就会发现你其实很擅长制造心动。你会主动靠近，也知道什么时候该收一点。你不是复杂型选手，可你的魅力往往就在那种自然里。",
+        sock: "whiteShort"
+      },
+      EJWM: {
+        title: "彩边白袜",
+        subtitle: "表面无害，细节全开",
+        quote: "真正会玩的东西，从来不是第一眼最吵的那个。",
+        traits: ["细节控", "清爽外表", "轻微反差", "耐看型"],
+        desc: "你外表看着规整清爽，但细节里全是小心思。你不靠夸张取胜，靠的是那种“越看越有东西”的劲。你不会硬闯进别人的世界，但很会留下一点让人回味的痕迹。",
+        sock: "whiteAccent"
+      },
+      EPCA: {
+        title: "条纹运动袜",
+        subtitle: "热烈又带点坏",
+        quote: "计划没有变化快，但我一般变化得很好看。",
+        traits: ["现场感强", "有劲", "不怕试探", "热量很高"],
+        desc: "你身上有种很直接的生命力，喜欢新鲜感，也愿意主动试探边界。你不一定稳定，但你很有现场感，跟你待在一起不太会无聊。你的魅力在于“人一来，空气就不一样了”。",
+        sock: "stripedSport"
+      },
+      EPCM: {
+        title: "球场训练袜",
+        subtitle: "随时能开局的人",
+        quote: "我不是没感觉，我只是先看你值不值得我认真。",
+        traits: ["反应快", "松弛", "会带气氛", "进退自如"],
+        desc: "你看起来松弛、自然、不费力，但其实一直在观察气氛。你很会调动场子，也很懂什么时候收回注意力。别人容易觉得你很好接近，可真正能让你停下来认真看的人并不多。",
+        sock: "trainingSock"
+      },
+      EPWA: {
+        title: "黑白拼色袜",
+        subtitle: "有趣是你的控制欲",
+        quote: "我没在乱来，我只是在让场面变得好看。",
+        traits: ["灵", "跳脱", "能接梗", "存在感会拐弯"],
+        desc: "你跳脱、灵、反应快，永远知道怎么把气氛往前推一点。你不是那种稳定输出型，但你很容易让人记住。很多人原本只是想轻轻路过，最后却被你这种有点坏有点可爱的劲留下来了。",
+        sock: "splitTone"
+      },
+      EPWM: {
+        title: "堆堆袜",
+        subtitle: "松弛感是天赋",
+        quote: "急什么，真正有意思的关系都熟得慢。",
+        traits: ["软感", "自由", "熟了很黏", "不爱太标准"],
+        desc: "你不喜欢太标准、太板正、太用力的东西。你有自己的节奏，熟了以后会很黏、很会闹，没熟的时候像只把自己裹起来的小动物。你让人上头的点，通常是舒服和可爱并存。",
+        sock: "slouchSock"
+      },
+      IJCA: {
+        title: "工装厚袜",
+        subtitle: "靠谱到让人安心",
+        quote: "说出来的话要算数，这不是很基本吗。",
+        traits: ["可靠", "稳定", "不花哨", "长期选项"],
+        desc: "你低调、耐看、不爱表演，但很能扛事。别人一开始可能不会最先注意到你，可一旦靠近，就很容易把你归到“长期选项”里。你不制造很多戏剧，但你会把很多事情 quietly 做好。",
+        sock: "workwearThick"
+      },
+      IJCM: {
+        title: "黑中筒袜",
+        subtitle: "后劲很强的人",
+        quote: "不是不热情，是热情不对外批发。",
+        traits: ["边界感强", "熟了很稳", "细节控", "后劲型选手"],
+        desc: "你有很明显的边界感，熟之前很难一下读懂你，但熟了以后会发现你稳定、细致、很值得信任。你最迷人的地方通常不在第一眼，而是在别人以为已经看懂你的时候，才发现其实还远远没有。",
+        sock: "blackMid"
+      },
+      IJWA: {
+        title: "复古菱格袜",
+        subtitle: "安静，但很有个人风格",
+        quote: "我不抢镜，但我不会没内容。",
+        traits: ["审美稳定", "安静有趣", "不迎合", "越聊越上头"],
+        desc: "你审美稳定，表达克制里带一点玩心，不轻易迎合别人。你不是那种立刻让人上头的人，你是那种越聊越想继续聊的人。你身上的吸引力不是炸开的，是慢慢渗出来的。",
+        sock: "argyleSock"
+      },
+      IJWM: {
+        title: "学院白长袜",
+        subtitle: "看着很乖，其实有自己的宇宙",
+        quote: "你以为我在发呆，其实我已经脑补完一整季剧情了。",
+        traits: ["慢热", "细腻", "小世界完整", "反差感强"],
+        desc: "你慢热、细腻、内心戏多，对外是柔和的，对内是很完整的小世界。真正懂你的人会非常上头，因为你的反差感很强。你看上去安静，其实感受力和想象力都比别人开得更满。",
+        sock: "academyLong"
+      },
+      IPCA: {
+        title: "灰毛巾袜",
+        subtitle: "不花，但很耐穿",
+        quote: "我不负责惊艳全场，我负责一直都在。",
+        traits: ["耐相处", "舒服", "不闹腾", "持久加分"],
+        desc: "你不喜欢太戏剧化的关系，更擅长把舒服和稳定做得很扎实。你看起来没那么炸，但长期相处非常加分。你不是那种一开始最抓眼的人，却很容易变成别人最后最舍不得的人。",
+        sock: "grayTerry"
+      },
+      IPCM: {
+        title: "船袜",
+        subtitle: "低存在感高级选手",
+        quote: "懂的人自然会懂，不懂也没必要解释。",
+        traits: ["低调", "轻盈", "边界稳", "不容易被拿捏"],
+        desc: "你不喜欢过度暴露自己，很多魅力都藏在细节里。你看起来轻、淡、没有攻击性，但其实很有边界，也不太容易被拿捏。真正注意到你的人，通常都不是随便看一眼的人。",
+        sock: "loaferSock"
+      },
+      IPWA: {
+        title: "家居羊毛袜",
+        subtitle: "舒服就是最大的性感",
+        quote: "能让我放松下来的人，本来就没几个。",
+        traits: ["温和", "真诚", "私密感强", "慢慢升温"],
+        desc: "你温和、真诚、慢慢热起来以后非常会照顾人。你不会强行制造张力，但你很容易让人想靠近，很适合建立私密感。你给人的感觉不是刺眼的，是一种很真实的、能让人松下来的暖。",
+        sock: "woolHome"
+      },
+      IPWM: {
+        title: "隐形袜",
+        subtitle: "你以为没存在感，其实是隐藏款",
+        quote: "我不站在最亮的地方，不代表我不好看。",
+        traits: ["自然感", "不抢位置", "越相处越离不开", "隐藏加分"],
+        desc: "你不喜欢抢位置，也不急着被谁定义。你最吸引人的地方是一种自然感，像没用力，但越相处越发现离不开。你不靠大开大合取胜，靠的是那种让人慢慢沉下去的舒服。",
+        sock: "invisibleSock"
+      }
+    };
+
+    const SOCK_GRID = [
+      "0000111100000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111110000000",
+      "0001111111000000",
+      "0000111111110000",
+      "0000011111111000",
+      "0000001111111000",
+      "0000000111110000",
+      "0000000011100000",
+      "0000000000000000"
+    ];
+
+    const sockStyles = {
+      allBlackLong: {
+        body: "#111111",
+        cuff: "#080808",
+        heel: "#202020",
+        toe: "#202020"
+      },
+      footballSock: {
+        body: "#f5f5f5",
+        cuff: "#111111",
+        heel: "#111111",
+        toe: "#111111",
+        stripes: ["#111111", "#111111"]
+      },
+      whiteShort: {
+        body: "#fbfbfb",
+        cuff: "#f1f1f1",
+        heel: "#dddddd",
+        toe: "#dddddd"
+      },
+      whiteAccent: {
+        body: "#fbfbfb",
+        cuff: "#ff5470",
+        heel: "#b8ff65",
+        toe: "#69a7ff",
+        stripes: ["#ff5470"]
+      },
+      stripedSport: {
+        body: "#ffffff",
+        cuff: "#111111",
+        heel: "#111111",
+        toe: "#111111",
+        stripes: ["#ff6d3a", "#111111"]
+      },
+      trainingSock: {
+        body: "#ececec",
+        cuff: "#6e6e6e",
+        heel: "#8f8f8f",
+        toe: "#8f8f8f",
+        stripes: ["#6e6e6e"]
+      },
+      splitTone: {
+        body: "#111111",
+        cuff: "#ffffff",
+        heel: "#ffffff",
+        toe: "#111111",
+        split: true
+      },
+      slouchSock: {
+        body: "#f5f1ed",
+        cuff: "#e8ded2",
+        heel: "#d8ccbe",
+        toe: "#d8ccbe",
+        slouch: true
+      },
+      workwearThick: {
+        body: "#d0b48a",
+        cuff: "#70563b",
+        heel: "#70563b",
+        toe: "#70563b"
+      },
+      blackMid: {
+        body: "#222222",
+        cuff: "#111111",
+        heel: "#444444",
+        toe: "#444444",
+        short: true
+      },
+      argyleSock: {
+        body: "#4a4a4a",
+        cuff: "#2b2b2b",
+        heel: "#2b2b2b",
+        toe: "#2b2b2b",
+        diamonds: true
+      },
+      academyLong: {
+        body: "#fbfbfb",
+        cuff: "#d7d7d7",
+        heel: "#ececec",
+        toe: "#ececec",
+        doubleCuff: true
+      },
+      grayTerry: {
+        body: "#bdbdbd",
+        cuff: "#9f9f9f",
+        heel: "#8b8b8b",
+        toe: "#8b8b8b"
+      },
+      loaferSock: {
+        body: "#d8d8d8",
+        cuff: "#d8d8d8",
+        heel: "#c6c6c6",
+        toe: "#c6c6c6",
+        hidden: true
+      },
+      woolHome: {
+        body: "#dcc7a4",
+        cuff: "#f1e6d2",
+        heel: "#c7aa80",
+        toe: "#c7aa80",
+        fuzzy: true
+      },
+      invisibleSock: {
+        body: "#f2d7c9",
+        cuff: "#f2d7c9",
+        heel: "#e4c2b1",
+        toe: "#e4c2b1",
+        hidden: true,
+        lowcut: true
+      }
+    };
+
+    let currentQ = 0;
+    let answers = [];
+    let selectedOpt = null;
+
+    function showPage(id) {
+      document.querySelectorAll(".page").forEach((page) => page.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function startQuiz() {
+      currentQ = 0;
+      answers = [];
+      selectedOpt = null;
+      renderQuestion();
+      showPage("page-quiz");
+    }
+
+    function renderQuestion() {
+      const q = questions[currentQ];
+      selectedOpt = null;
+
+      document.getElementById("quiz-counter").textContent = `${currentQ + 1} / ${questions.length}`;
+      document.getElementById("progress-fill").style.width = `${(currentQ / questions.length) * 100}%`;
+      document.getElementById("question-text").textContent = q.text;
+      document.getElementById("question-hint").textContent = q.hint;
+      document.getElementById("question-tag").textContent = currentQ === questions.length - 1 ? "最后一题" : "袜格雷达启动中";
+
+      const wrap = document.getElementById("options-wrap");
+      wrap.innerHTML = "";
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "opt";
+        btn.innerHTML = `<span class="opt-key">${opt.key}</span><span class="opt-text">${opt.text}</span>`;
+        btn.onclick = () => selectOption(idx, btn);
+        wrap.appendChild(btn);
+      });
+
+      const nextBtn = document.getElementById("btn-next");
+      nextBtn.disabled = true;
+      nextBtn.textContent = currentQ === questions.length - 1 ? "查看结果" : "继续";
+    }
+
+    function selectOption(idx, el) {
+      document.querySelectorAll(".opt").forEach((opt) => opt.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedOpt = idx;
+      document.getElementById("btn-next").disabled = false;
+    }
+
+    function nextQuestion() {
+      if (selectedOpt === null) return;
+      answers.push(questions[currentQ].options[selectedOpt].dim);
+
+      if (currentQ < questions.length - 1) {
+        currentQ += 1;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }
+
+    function goBack() {
+      if (document.getElementById("page-home").classList.contains("active")) return;
+
+      if (document.getElementById("page-result").classList.contains("active")) {
+        showPage("page-home");
+        return;
+      }
+
+      if (currentQ === 0) {
+        showPage("page-home");
+      } else {
+        currentQ -= 1;
+        answers.pop();
+        renderQuestion();
+      }
+    }
+
+    function calcResultCode() {
+      const count = { E: 0, I: 0, J: 0, P: 0, C: 0, W: 0, A: 0, M: 0 };
+      answers.forEach((dim) => {
+        if (count[dim] !== undefined) count[dim] += 1;
+      });
+
+      const e = count.E >= count.I ? "E" : "I";
+      const j = count.J >= count.P ? "J" : "P";
+      const c = count.C >= count.W ? "C" : "W";
+      const a = count.A >= count.M ? "A" : "M";
+
+      return e + j + c + a;
+    }
+
+    function pixelColor(style, x, y) {
+      const isCuff = y <= (style.lowcut ? 1 : style.short ? 2 : 3);
+      const isHeel = x >= 8 && x <= 11 && y >= 10 && y <= 12;
+      const isToe = x >= 10 && y >= 12;
+      const stripeRows = style.lowcut ? [] : style.short ? [3] : [4, 6];
+
+      let fill = style.body;
+      if (isCuff) fill = style.cuff;
+      if (isHeel) fill = style.heel;
+      if (isToe) fill = style.toe;
+
+      if (style.doubleCuff && (y === 2 || y === 4)) fill = "#c8c8c8";
+
+      if (style.stripes && stripeRows.includes(y)) {
+        fill = style.stripes[(stripeRows.indexOf(y)) % style.stripes.length];
+      }
+
+      if (style.split && x >= 8 && y >= 8) {
+        fill = "#ffffff";
+      }
+
+      if (style.slouch && y >= 3 && y <= 8) {
+        if (y % 2 === 0 && x <= 8) fill = "#efe6db";
+      }
+
+      if (style.diamonds) {
+        const diamond =
+          (x === 5 && y === 5) || (x === 4 && y === 6) || (x === 6 && y === 6) ||
+          (x === 5 && y === 7) || (x === 8 && y === 7) || (x === 7 && y === 8) ||
+          (x === 9 && y === 8) || (x === 8 && y === 9);
+        if (diamond) fill = "#f3f0ea";
+      }
+
+      if (style.fuzzy && y >= 2 && y <= 8 && (x + y) % 3 === 0) {
+        fill = "#efe2cc";
+      }
+
+      return fill;
+    }
+
+    function buildSockSvg(styleKey) {
+      const style = sockStyles[styleKey] || sockStyles.blackMid;
+      const pixel = 8;
+      const width = 16 * pixel;
+      const height = 16 * pixel;
+      let rects = "";
+
+      SOCK_GRID.forEach((row, y) => {
+        [...row].forEach((cell, x) => {
+          if (cell !== "1") return;
+
+          if (style.hidden && y < 5) return;
+          if (style.lowcut && y < 7) return;
+
+          const fill = pixelColor(style, x, y);
+          rects += `<rect x="${x * pixel}" y="${y * pixel}" width="${pixel}" height="${pixel}" fill="${fill}" />`;
+        });
+      });
+
+      return `
+        <svg viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true">
+          <rect width="${width}" height="${height}" rx="18" fill="transparent" />
+          ${rects}
+        </svg>
+      `;
+    }
+
+    function showResult() {
+      const code = calcResultCode();
+      const data = results[code] || results.IJCM;
+      const now = new Date();
+
+      document.getElementById("result-type").textContent = data.title;
+      document.getElementById("result-sub").textContent = data.subtitle;
+      document.getElementById("result-emoji").innerHTML = buildSockSvg(data.sock);
+      document.getElementById("result-quote").textContent = data.quote;
+      document.getElementById("result-meta").textContent = `${code} 型袜格 | ${now.getMonth() + 1}月${now.getDate()}日`;
+      document.getElementById("result-desc").textContent = data.desc;
+
+      const traitList = document.getElementById("trait-list");
+      traitList.innerHTML = "";
+      data.traits.forEach((trait) => {
+        const span = document.createElement("span");
+        span.className = "trait";
+        span.textContent = trait;
+        traitList.appendChild(span);
+      });
+
+      showPage("page-result");
+    }
+
+    function shareResult() {
+      const type = document.getElementById("result-type").textContent;
+      const subtitle = document.getElementById("result-sub").textContent;
+      const text = `我在 SockTI 测出来是「${type}」\n${subtitle}\n你也来测测你是哪种袜子？`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: "SockTI 袜格测试",
+          text,
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(`${text}\n${window.location.href}`).then(() => {
+          alert("结果文案已复制，可以直接发给朋友。");
+        }).catch(() => {
+          alert(text);
+        });
+      }
+    }
+
+    function retryQuiz() {
+      startQuiz();
+    }
+  </script>
 </body>
 </html>
