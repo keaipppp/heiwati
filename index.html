@@ -149,11 +149,11 @@
     }
 
     .slot-machine {
-      width: min(250px, 82%);
-      height: 138px;
+      width: min(298px, 92%);
+      height: 204px;
       position: relative;
       z-index: 3;
-      border-radius: 20px;
+      border-radius: 22px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.04)),
         #181818;
@@ -162,6 +162,7 @@
         inset 0 0 0 2px rgba(0,0,0,0.4),
         0 18px 34px rgba(0,0,0,0.35);
       overflow: hidden;
+      transform-origin: center;
     }
 
     .slot-machine::before,
@@ -170,7 +171,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      height: 36px;
+      height: 42px;
       z-index: 3;
       pointer-events: none;
     }
@@ -187,39 +188,49 @@
 
     .slot-window {
       position: absolute;
-      inset: 20px 34px;
+      inset: 32px 24px 56px;
       border-radius: 16px;
       background: #f8f3e8;
       border: 3px solid #050505;
       overflow: hidden;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
     }
 
     .slot-window::before {
       content: "";
       position: absolute;
-      inset: 48px 0 auto;
-      height: 2px;
-      background: rgba(0, 0, 0, 0.08);
+      inset: 8px;
+      border-radius: 10px;
+      border: 2px solid rgba(0, 0, 0, 0.08);
       z-index: 2;
+      pointer-events: none;
     }
 
     .slot-reel {
-      display: grid;
-      grid-auto-rows: 96px;
-      animation: slotSpin 4.8s steps(16) infinite;
+      position: relative;
+      background: rgba(255,255,255,0.45);
+      border-radius: 12px;
+      overflow: hidden;
       will-change: transform;
     }
 
+    .slot-track {
+      transition: transform 120ms linear;
+    }
+
     .slot-item {
-      height: 96px;
+      height: 100px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .slot-item svg {
-      width: 82px;
-      height: 82px;
+      width: 68px;
+      height: 68px;
       display: block;
       filter: drop-shadow(0 8px 6px rgba(0,0,0,0.18));
     }
@@ -227,10 +238,9 @@
     .slot-knob {
       position: absolute;
       right: 11px;
-      top: 50%;
+      top: 66px;
       width: 16px;
       height: 38px;
-      transform: translateY(-50%);
       border-radius: 999px;
       background: #b8ff65;
       border: 2px solid #050505;
@@ -248,14 +258,90 @@
       z-index: 4;
     }
 
-    @keyframes slotSpin {
-      to {
-        transform: translateY(-1536px);
+    .slot-status {
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      min-width: 112px;
+      text-align: center;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      z-index: 4;
+    }
+
+    .slot-status.win {
+      background: rgba(184, 255, 101, 0.18);
+      color: #d7ff9d;
+    }
+
+    .slot-status.lose {
+      background: rgba(255, 106, 106, 0.16);
+      color: #ffc7c7;
+    }
+
+    .slot-machine.jackpot {
+      animation: jackpotFlash 760ms ease;
+    }
+
+    .slot-machine.jackpot::before,
+    .slot-machine.jackpot::after {
+      background: rgba(184, 255, 101, 0.35);
+      filter: blur(10px);
+    }
+
+    .slot-machine.miss {
+      animation: missShake 360ms ease;
+    }
+
+    @keyframes jackpotFlash {
+      0% {
+        box-shadow:
+          inset 0 0 0 2px rgba(0,0,0,0.4),
+          0 18px 34px rgba(0,0,0,0.35);
+      }
+      28% {
+        box-shadow:
+          inset 0 0 0 2px rgba(184,255,101,0.52),
+          0 0 0 4px rgba(184,255,101,0.18),
+          0 0 28px rgba(184,255,101,0.48),
+          0 18px 34px rgba(0,0,0,0.35);
+      }
+      56% {
+        box-shadow:
+          inset 0 0 0 2px rgba(0,0,0,0.4),
+          0 0 0 6px rgba(184,255,101,0.10),
+          0 0 14px rgba(184,255,101,0.25),
+          0 18px 34px rgba(0,0,0,0.35);
+      }
+      100% {
+        box-shadow:
+          inset 0 0 0 2px rgba(0,0,0,0.4),
+          0 18px 34px rgba(0,0,0,0.35);
       }
     }
 
+    @keyframes missShake {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-4px); }
+      40% { transform: translateX(4px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .slot-reel {
+      .slot-track {
+        transition: none;
+      }
+
+      .slot-machine.jackpot,
+      .slot-machine.miss {
         animation: none;
       }
     }
@@ -535,27 +621,27 @@
     <section class="page active" id="page-home">
       <div class="card">
         <div class="hero">
-          <div class="eyebrow">SockTI / 袜子人格鉴定处</div>
+          <div class="eyebrow">SockTI</div>
           <h1>你本人到底是什么袜感？</h1>
           <p class="hero-sub">
-            白袜、黑袜、足球袜、船袜。
-            你身上那股袜味，根本藏不住。
+            16 种袜型人格，看看你到底是哪一双。
           </p>
           <div class="sock-stage">
             <div class="slot-machine" aria-hidden="true">
               <div class="slot-label">SOCK SLOT</div>
               <div class="slot-window">
-                <div class="slot-reel" id="slot-reel"></div>
+                <div class="slot-reel"><div class="slot-track" id="slot-track-0"></div></div>
+                <div class="slot-reel"><div class="slot-track" id="slot-track-1"></div></div>
+                <div class="slot-reel"><div class="slot-track" id="slot-track-2"></div></div>
               </div>
               <div class="slot-knob"></div>
+              <div class="slot-status" id="slot-status">SPINNING</div>
             </div>
           </div>
         </div>
         <div class="section">
           <div class="bullet-list">
-            <div class="bullet">有的人一看就是白袜，有的人一站出来就是全黑长袜。</div>
-            <div class="bullet">你到底是哪一双，测完就知道。</div>
-            <div class="bullet">别嘴硬，你自己心里应该也有答案。</div>
+            <div class="bullet">测完你就知道。</div>
           </div>
           <div class="btn-row">
             <button class="btn btn-primary" onclick="startQuiz()">开始测试</button>
@@ -990,6 +1076,12 @@
     let currentQ = 0;
     let answers = [];
     let selectedOpt = null;
+    let slotTimer = null;
+    let slotRound = 0;
+
+    const SLOT_ITEM_HEIGHT = 100;
+    const SLOT_VISIBLE_CENTER = 0;
+    const SLOT_LOOP_REPEAT = 4;
 
     function showPage(id) {
       document.querySelectorAll(".page").forEach((page) => page.classList.remove("active"));
@@ -1147,15 +1239,108 @@
       `;
     }
 
-    function renderSlotMachine() {
-      const reel = document.getElementById("slot-reel");
-      if (!reel) return;
+    function buildSlotItems(sockKeys) {
+      return sockKeys.map((key) => `<div class="slot-item" data-sock="${key}">${buildSockSvg(key)}</div>`).join("");
+    }
 
+    function renderSlotMachine() {
+      const tracks = [
+        document.getElementById("slot-track-0"),
+        document.getElementById("slot-track-1"),
+        document.getElementById("slot-track-2")
+      ];
       const sockKeys = Object.values(results).map((item) => item.sock);
-      const loopKeys = [...sockKeys, ...sockKeys];
-      reel.innerHTML = loopKeys.map((key) => {
-        return `<div class="slot-item">${buildSockSvg(key)}</div>`;
-      }).join("");
+      const baseOrder = sockKeys.slice();
+
+      tracks.forEach((track, idx) => {
+        if (!track) return;
+        const rotated = baseOrder.slice(idx * 5).concat(baseOrder.slice(0, idx * 5));
+        const loopKeys = Array.from({ length: SLOT_LOOP_REPEAT }, () => rotated).flat();
+        track.innerHTML = buildSlotItems(loopKeys);
+        track.style.transform = `translateY(0px)`;
+      });
+
+      startSlotLoop();
+    }
+
+    function pickSlotOutcome(sockKeys) {
+      const win = Math.random() < 0.18;
+      if (win) {
+        const winner = sockKeys[Math.floor(Math.random() * sockKeys.length)];
+        return [winner, winner, winner];
+      }
+
+      let picks = [];
+      while (new Set(picks).size < 2) {
+        picks = [
+          sockKeys[Math.floor(Math.random() * sockKeys.length)],
+          sockKeys[Math.floor(Math.random() * sockKeys.length)],
+          sockKeys[Math.floor(Math.random() * sockKeys.length)]
+        ];
+      }
+      return picks;
+    }
+
+    function startSlotLoop() {
+      const tracks = [
+        document.getElementById("slot-track-0"),
+        document.getElementById("slot-track-1"),
+        document.getElementById("slot-track-2")
+      ];
+      const status = document.getElementById("slot-status");
+      const machine = document.querySelector(".slot-machine");
+      const sockKeys = Object.values(results).map((item) => item.sock);
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const roundDuration = prefersReducedMotion ? 1200 : 5000;
+      const stopGap = prefersReducedMotion ? 120 : 280;
+
+      function runRound() {
+        slotRound += 1;
+        const round = slotRound;
+        const picks = pickSlotOutcome(sockKeys);
+        if (machine) {
+          machine.classList.remove("jackpot", "miss");
+        }
+        if (status) {
+          status.textContent = "SPINNING";
+          status.classList.remove("win", "lose");
+        }
+
+        tracks.forEach((track, idx) => {
+          if (!track) return;
+          const cycles = prefersReducedMotion ? 1 + idx : 2 + idx;
+          const targetIndex = sockKeys.indexOf(picks[idx]) + (sockKeys.length * cycles);
+          const travel = (targetIndex - SLOT_VISIBLE_CENTER) * SLOT_ITEM_HEIGHT;
+          track.style.transition = "none";
+          track.style.transform = "translateY(0px)";
+          track.getBoundingClientRect();
+          track.style.transition = `transform ${roundDuration - (2 - idx) * stopGap}ms cubic-bezier(0.16, 0.84, 0.26, 1)`;
+          track.style.transform = `translateY(-${travel}px)`;
+        });
+
+        const settleAt = roundDuration + stopGap + 80;
+        window.setTimeout(() => {
+          if (round !== slotRound) return;
+          const hit = picks[0] === picks[1] && picks[1] === picks[2];
+          if (machine) {
+            machine.classList.remove("jackpot", "miss");
+            machine.getBoundingClientRect();
+            machine.classList.add(hit ? "jackpot" : "miss");
+          }
+          if (status) {
+            status.textContent = hit ? "WIN" : "✕";
+            status.classList.toggle("win", hit);
+            status.classList.toggle("lose", !hit);
+          }
+        }, settleAt);
+
+        slotTimer = window.setTimeout(runRound, roundDuration + 1200);
+      }
+
+      if (slotTimer) {
+        window.clearTimeout(slotTimer);
+      }
+      runRound();
     }
 
     function showResult() {
