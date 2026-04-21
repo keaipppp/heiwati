@@ -1,0 +1,175 @@
+html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>狗格测试 - DogTI</title>
+    <style>
+        { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .home { text-align: center; }
+        .home h1 { font-size: 2.5rem; color: #667eea; margin-bottom: 10px; }
+        .home .subtitle { color: #666; margin-bottom: 30px; }
+        .dog-emoji { font-size: 5rem; margin: 20px 0; animation: bounce 2s infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; padding: 15px 50px; border-radius: 30px;
+            font-size: 1.1rem; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        .quiz { display: none; }
+        .progress { height: 6px; background: #eee; border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
+        .question-num { color: #667eea; font-weight: bold; margin-bottom: 10px; }
+        .question { font-size: 1.3rem; color: #333; margin-bottom: 30px; line-height: 1.6; }
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option { background: #f8f9fa; border: 2px solid transparent; padding: 18px 20px; border-radius: 12px; cursor: pointer; transition: all 0.3s; text-align: left; font-size: 1rem; }
+        .option:hover { border-color: #667eea; background: #f0f4ff; }
+        .result { display: none; text-align: center; }
+        .result-emoji { font-size: 6rem; margin: 20px 0; }
+        .result-type { font-size: 2rem; color: #667eea; font-weight: bold; margin-bottom: 10px; }
+        .result-name { font-size: 1.5rem; color: #333; margin-bottom: 20px; }
+        .result-desc { color: #666; line-height: 1.8; margin-bottom: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px; }
+        .tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .tag { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; }
+        .loading { display: none; text-align: center; padding: 60px 0; }
+        .loading-spinner { width: 60px; height: 60px; border: 4px solid #eee; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="home" id="home">
+            <div class="dog-emoji">🐕</div>
+            <h1>DogTI 测试</h1>
+            <p class="subtitle">测测你是哪种狗格类型</p>
+            <p style="color: #999; font-size: 0.9rem; margin-bottom: 30px;">共 10 题 · 约 2 分钟</p>
+            <button class="btn" onclick="startQuiz()">开始测试</button>
+        </div>
+        <div class="quiz" id="quiz">
+            <div class="progress">
+            <div class="progress-bar" id="progressBar" style="width: 10%"></div></div>
+            <div class="question-num" id="questionNum">1 / 10</div>
+            <div class="question" id="questionText">加载中...</div>
+            <div class="options" id="options"></div>
+        </div>
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p>正在分析你的狗格...</p>
+        </div>
+        <div class="result" id="result">
+            <p style="color: #667eea; font-weight: bold; margin-bottom: 10px;">你的狗格是</p>
+            <div class="result-type" id="resultType">—</div>
+            <div class="result-name" id="resultName">—</div>
+            <div class="result-emoji" id="resultEmoji">🐕</div>
+            <div class="result-desc" id="resultDesc">—</div>
+            <div
+
+class="tags" id="tags"></div>
+            <button class="btn" onclick="restart()">再测一次</button>
+        </div>
+    </div>
+javascript
+    <script>
+        const questions = [
+            { text: "周末到了，你更想...", options: [{ text: "🎉 约朋友出去玩", type: "E", dim: "EI" }, { text: "🏠 在家休息充电", type: "I", dim: "EI" }] },
+            { text: "遇到问题时，你通常...", options: [{ text: "🧠 先分析利弊再做决定", type: "T", dim: "TF" }, { text: "❤️ 考虑大家的感受", type: "F", dim: "TF" }] },
+            { text: "你更喜欢哪种生活方式？", options: [{ text: "📋 有计划、有条理", type: "J", dim: "JP" }, { text: "🌊 随性、灵活应变", type: "P", dim: "JP" }] },
+            { text: "你更关注...", options: [{ text: "👀 具体的事实和细节", type: "S", dim: "SN" }, { text: "💡 可能性和未来", type: "N", dim: "SN" }] },
+            { text: "在聚会上，你通常...", options: [{ text: "🎤 主动和人聊天", type: "E", dim: "EI" }, { text: "👂 听别人说话", type: "I", dim: "EI" }] },
+            { text: "做决定时，什么更重要？", options: [{ text: "✅ 逻辑和公平", type: "T", dim: "TF" }, { text: "🤝 和谐与人情", type: "F", dim: "TF" }] },
+            { text: "你的工作/学习风格是...", options: [{ text: "⏰ 提前完成，不喜欢拖延", type: "J", dim: "JP" }, { text: "🔥 截止日期前效率最高", type: "P", dim: "JP" }] },
+            { text: "你更相信...", options: [{ text: "📊 经验和实际数据", type: "S", dim: "SN" }, { text: "🔮 直觉和灵感", type: "N", dim: "SN" }] },
+            { text: "新环境中，你会...", options: [{ text: "🚀 主动认识新朋友", type: "E", dim: "EI" }, { text: "🛡️ 先观察再行动", type: "I", dim: "EI" }] },
+            { text: "面对批评，你更在意...", options: [{ text: "📌 批评是否合理", type: "T", dim: "TF" }, { text: "💔 对方的态度", type: "F", dim: "TF" }] }
+        ];
+
+        const results = {
+            "ESTJ": { name: "德牧", emoji: "🐕‍🦺", desc: "天生的领导者，忠诚可靠，执行力超强。你是团队的主心骨，说到做到，值得信赖。", tags: ["可靠", "高效", "负责"] },
+            "ESFJ": { name: "金毛", emoji: "🦮", desc: "温暖治愈的小太阳，总是照顾他人感受。你的友善让周围的人都感到舒适。", tags: ["温暖", "体贴", "合群"] },
+            "ISTJ": { name: "柴犬", emoji: "🐕", desc: "稳重踏实的实干家，重视承诺和传统。你做事有条理，是值得信赖的伙伴。", tags: ["稳重", "认真", "守序"] },
+            "ISFJ": { name: "柯基", emoji: "🐕", desc: "默默付出的守护者，细腻敏感。你总是把别人的需求放在第一位，太温柔了。", tags: ["温柔", "细心", "忠诚"] },
+            "ENTJ": { name: "杜宾", emoji: "🐕‍🦺", desc: "天生的指挥官，果断有魄力。你目标明确，带领团队冲锋陷阵，气场强大。", tags: ["果断", "领导力", "野心"] },
+            "ENTP": { name: "哈士奇", emoji: "🐕", desc: "脑洞大开的创意家，讨厌无聊。你的机智和幽默总能带来惊喜（和麻烦）。", tags: ["机智", "叛逆", "创意"] },
+            "INTJ": { name: "边牧", emoji: "🐕", desc: "智商爆表的策略家，独立自主。你善于规划，追求效率，是完美主义者。", tags: ["聪明", "独立", "战略"] },
+            "INTP": { name: "萨摩耶", emoji: "🐕", desc: "好奇宝宝，沉浸在自己的世界里。你爱思考抽象问题，外表萌内心深邃。", tags: ["好奇", "理性", "呆萌"] },
+            "ENFJ": { name: "拉布拉多", emoji: "🦮", desc: "天生的鼓舞者，充满魅力。你善于激励他人，是大家的精神领袖。", tags: ["热情", "感染力", "利他"] },
+            "ENFP": { name: "柯基", emoji: "🐕", desc: "活力四射的快乐小狗，充满创意。你的热情能感染所有人，讨厌被束缚。", tags: ["热情", "创意", "自由"] },
+            "INFJ": { name: "秋田犬", emoji: "🐕", desc: "深邃的理想主义者，洞察人心。你有独特的世界观，追求有意义的人生。", tags: ["深刻", "理想", "神秘"] },
+            "INFP": { name: "比格", emoji: "🐕", desc: "浪漫的追梦人，内心丰富。你重视价值观，虽然敏感但充满创造力。", tags: ["浪漫", "敏感", "艺术"] },
+            "ESTP": { name: "斗牛犬", emoji: "🐕", desc: "行动派冒险家，活在当下。你喜欢刺激，敢于尝试，是派对的主角。", tags: ["冒险", "行动", "大胆"] },
+            "ESFP": { name: "泰迪", emoji: "🐕", desc: "天生的表演者，爱成为焦点。你活泼可爱，总能带来欢乐气氛。", tags: ["活泼", "社交", "乐观"] },
+            "ISTP": { name: "狼狗", emoji: "🐕‍🦺", desc: "冷静的观察者，动手能力超强。你喜欢独自探索，是问题解决专家。", tags: ["冷静", "独立", "实用"] },
+            "ISFP": { name: "博美", emoji: "🐕", desc: "艺术家的灵魂，敏感细腻。你追求美感，虽然安静但有自己的小宇宙。", tags: ["艺术", "敏感", "随和"] }
+        };
+        let currentQuestion = 0;
+        let answers = [];
+        function startQuiz() {
+            document.getElementById('home').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('questionNum').textContent = `${currentQuestion + 1} / 10`;
+            document.getElementById('questionText').textContent = q.text;
+            document.getElementById('progressBar').style.width = `${((currentQuestion + 1) / 10) * 100}%`;
+            const optionsHtml = q.options.map((opt, idx) => `<button class="option" onclick="selectOption(${idx})">${opt.text}</button>`).join('');
+            document.getElementById('options').innerHTML = optionsHtml;
+        }
+        function selectOption(idx) {
+            answers.push(questions[currentQuestion].options[idx]);
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showLoading();
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            setTimeout(() => { showResult(); }, 2000);
+        }
+        function showResult() {
+            const scores = { E:0, I:0, S:0, N:0, T:0, F:0, J:0, P:0 };
+            answers.forEach(a => scores[a.type]++);
+            const type = [scores.E >= scores.I ? 'E' : 'I', scores.S >= scores.N ? 'S' : 'N', scores.T >= scores.F ? 'T' : 'F', scores.J >= scores.P ? 'J' : 'P'].join('');
+            const result = results[type];
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultType').textContent = type;
+            document.getElementById('resultName').textContent = result.name;
+            document.getElementById('resultEmoji').textContent = result.emoji;
+            document.getElementById('resultDesc').textContent = result.desc;
+            document.getElementById('tags').innerHTML = result.tags.map(t => `<span class="tag">${t}</span>`).join('');
+        }
+        function restart() {
+            currentQuestion = 0;
+            answers = [];
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('home').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
